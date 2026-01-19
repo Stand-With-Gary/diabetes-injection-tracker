@@ -241,53 +241,37 @@
         }
 
         .history-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
         }
 
         .history-date {
+            font-size: 0.9375rem;
             font-weight: 600;
             color: #1e293b;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
 
         .history-time {
             font-size: 0.8125rem;
             color: #64748b;
+            margin-bottom: 0.5rem;
         }
 
         .history-details {
             font-size: 0.8125rem;
             color: #64748b;
-            font-weight: 500;
-        }
-
-        .btn-delete {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 0.375rem 0.875rem;
-            font-size: 0.75rem;
-            border-radius: 0.5rem;
-            margin-top: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .btn-delete:hover {
-            background: #fecaca;
-            transform: scale(1.05);
+            margin-bottom: 0.75rem;
         }
 
         .type-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.625rem;
-            border-radius: 0.375rem;
             font-size: 0.6875rem;
             font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
             text-transform: uppercase;
             letter-spacing: 0.025em;
         }
@@ -307,30 +291,89 @@
             color: #9f1239;
         }
 
+        .btn-delete {
+            padding: 0.5rem 1rem;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
         .info-text {
-            font-size: 0.8125rem;
-            line-height: 1.6;
-            color: #475569;
-            font-weight: 500;
+            color: #64748b;
+            font-size: 0.875rem;
         }
 
-        .steps-list {
-            padding-left: 1.25rem;
-            line-height: 1.8;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .steps-list li {
-            font-size: 0.8125rem;
-            color: #475569;
-            font-weight: 500;
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
             margin-bottom: 0.5rem;
         }
 
-        .steps-list strong {
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
             color: #1e293b;
         }
 
-        .stats-badge {
+        .instructions {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .instructions h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .instructions ol {
+            margin-left: 1.25rem;
+            color: #475569;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .instructions strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .site-count {
             display: inline-block;
             background: #f1f5f9;
             color: #0f172a;
@@ -374,7 +417,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="sidebar">
             <div class="card">
                 <h3>Select site type:</h3>
@@ -406,93 +449,78 @@
             <div class="card">
                 <h3>Marker colours:</h3>
                 <div class="legend-grid" id="legend-container">
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background: #10b981;"></div>
-                        <div class="legend-text">Ideal rotation time reached</div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background: #fbbf24;"></div>
-                        <div class="legend-text">Okay to use</div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background: #f97316;"></div>
-                        <div class="legend-text">Use if needed</div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background: #ef4444;"></div>
-                        <div class="legend-text">Too recent – avoid</div>
-                    </div>
                 </div>
             </div>
-            
+
             <div class="card">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Sites</div>
+                        <div class="stat-value" id="injection-count">0</div>
+                    </div>
+                </div>
+                <h3>Site history:</h3>
+                <div id="history-list"></div>
+            </div>
+
+            <div class="instructions">
                 <h3>How to use:</h3>
-                <ol class="steps-list">
+                <ol>
                     <li><strong>Select a site type</strong> using the buttons above</li>
                     <li>Click and drag to rotate the 3D body</li>
                     <li>Scroll to zoom in for precise placement</li>
                     <li><strong>Click on the body</strong> to place a marker</li>
-                    <li>Click any marker to delete it</li>
+                    <li>Markers change colour over time showing rotation status</li>
+                    <li>Click on a marker to delete it</li>
                 </ol>
-            </div>
-
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="margin: 0;">Recent sites</h3>
-                    <span class="stats-badge" id="injection-count">0</span>
-                </div>
-                <div id="history-list"></div>
             </div>
         </div>
     </div>
 
     <script>
-        const DB_KEY = 'injection-tracker-data';
-        let injections = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+        const DB_KEY = 'diabetesInjections';
+        const ROTATION_PERIODS = {
+            injection: { caution: 1, warning: 3, ideal: 7 },
+            infusion: { caution: 1, warning: 5, ideal: 10 },
+            cgm: { caution: 1, warning: 7, ideal: 14 }
+        };
+
         let scene, camera, renderer, controls, model;
+        let injections = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
         let injectionMarkers = [];
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
         let selectedType = 'injection';
 
-        const ROTATION_PERIODS = {
-            injection: { ideal: 7, warning: 4, caution: 2 },
-            infusion: { ideal: 10, warning: 6, caution: 3 },
-            cgm: { ideal: 14, warning: 10, caution: 5 }
-        };
-
         function selectType(type) {
             selectedType = type;
-            
-            document.querySelectorAll('.type-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.type-btn.${type}`).classList.add('active');
             updateLegend();
         }
 
         function updateLegend() {
+            const container = document.getElementById('legend-container');
             const periods = ROTATION_PERIODS[selectedType];
-            const legendHTML = `
+            
+            container.innerHTML = `
                 <div class="legend-item">
-                    <div class="legend-dot" style="background: #10b981;"></div>
-                    <div class="legend-text">${periods.ideal}+ days ago (ideal)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #fbbf24;"></div>
-                    <div class="legend-text">${periods.warning}–${periods.ideal - 1} days ago (okay)</div>
+                    <div class="legend-dot" style="background: #ef4444;"></div>
+                    <div class="legend-text">0–${periods.caution - 1} days (too soon)</div>
                 </div>
                 <div class="legend-item">
                     <div class="legend-dot" style="background: #f97316;"></div>
-                    <div class="legend-text">${periods.caution}–${periods.warning - 1} days ago (use if needed)</div>
+                    <div class="legend-text">${periods.caution}–${periods.warning - 1} days (caution)</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-dot" style="background: #ef4444;"></div>
-                    <div class="legend-text">0–${periods.caution - 1} days ago (avoid)</div>
+                    <div class="legend-dot" style="background: #fbbf24;"></div>
+                    <div class="legend-text">${periods.warning}–${periods.ideal - 1} days (ok)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #10b981;"></div>
+                    <div class="legend-text">${periods.ideal}+ days (ideal rotation)</div>
                 </div>
             `;
-            document.getElementById('legend-container').innerHTML = legendHTML;
         }
 
         function init() {
@@ -506,14 +534,19 @@
             
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.innerHTML = '';
             container.appendChild(renderer.domElement);
             
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
             
-            const keyLight = new THREE.DirectionalLight(0xffffff, 0.7);
+            const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
             keyLight.position.set(5, 5, 5);
+            keyLight.castShadow = true;
+            keyLight.shadow.mapSize.width = 2048;
+            keyLight.shadow.mapSize.height = 2048;
             scene.add(keyLight);
             
             const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
@@ -530,92 +563,45 @@
             controls.minDistance = 0.3;
             controls.maxDistance = 5;
             
-            let loadedModels = { male: null, female: null };
+            let maleModel = null;
+            let femaleModel = null;
             let currentGender = 'male';
             
             const loader = new THREE.GLTFLoader();
             
-            // Load the pack file which contains both models
             loader.load('male__female_base_mesh_pack.glb', (gltf) => {
                 console.log('Loaded model pack:', gltf);
                 
-                // The pack contains both male and female as separate meshes
-                // We need to find and separate them
-                gltf.scene.traverse((child) => {
-                    if (child.isMesh) {
-                        // Apply material to all meshes
-                        child.material = new THREE.MeshStandardMaterial({
-                            color: 0xd4a5a5,
-                            roughness: 0.7,
-                            metalness: 0.1,
-                        });
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        
-                        // Try to identify male vs female by name
-                        const name = child.name.toLowerCase();
-                        if (name.includes('female') || name.includes('woman')) {
-                            if (!loadedModels.female) loadedModels.female = [];
-                            loadedModels.female.push(child);
-                        } else {
-                            // Default to male if not explicitly female
-                            if (!loadedModels.male) loadedModels.male = [];
-                            loadedModels.male.push(child);
+                const children = gltf.scene.children;
+                
+                if (children.length >= 2) {
+                    maleModel = children[0].clone();
+                    maleModel.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = new THREE.MeshStandardMaterial({
+                                color: 0xd4a5a5,
+                                roughness: 0.7,
+                                metalness: 0.1,
+                            });
+                            child.castShadow = true;
+                            child.receiveShadow = true;
                         }
-                    }
-                });
-                
-                // If we couldn't separate them by name, split by index
-                // (usually the pack has them as separate objects)
-                if (!loadedModels.female && gltf.scene.children.length >= 2) {
-                    loadedModels.male = [gltf.scene.children[0]];
-                    loadedModels.female = [gltf.scene.children[1]];
-                }
-                
-                model = new THREE.Group();
-                
-                // Add only male meshes initially
-                if (loadedModels.male) {
-                    loadedModels.male.forEach(mesh => {
-                        model.add(mesh.clone());
                     });
-                }
-                
-                const box = new THREE.Box3().setFromObject(model);
-                const center = box.getCenter(new THREE.Vector3());
-                const size = box.getSize(new THREE.Vector3());
-                const maxDim = Math.max(size.x, size.y, size.z);
-                const scale = 1.5 / maxDim;
-                
-                model.scale.multiplyScalar(scale);
-                model.position.sub(center.multiplyScalar(scale));
-                
-                scene.add(model);
-                
-                loadExistingMarkers();
-                updateHistory();
-            }, undefined, (error) => {
-                console.error('Error:', error);
-                container.innerHTML = '<div class="error"><h2>Cannot load 3D model</h2><p>Make sure male__female_base_mesh_pack.glb is in the same folder.</p></div>';
-            });
-            
-            window.switchGender = function() {
-                const selectedGender = document.getElementById('gender-select').value;
-                if (selectedGender === currentGender) return;
-                
-                currentGender = selectedGender;
-                
-                // Remove current model
-                scene.remove(model);
-                
-                // Create new model with selected gender
-                model = new THREE.Group();
-                const meshes = loadedModels[selectedGender];
-                
-                if (meshes) {
-                    meshes.forEach(mesh => {
-                        model.add(mesh.clone());
+                    
+                    femaleModel = children[1].clone();
+                    femaleModel.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = new THREE.MeshStandardMaterial({
+                                color: 0xd4a5a5,
+                                roughness: 0.7,
+                                metalness: 0.1,
+                            });
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
                     });
+                    
+                    model = maleModel;
                     
                     const box = new THREE.Box3().setFromObject(model);
                     const center = box.getCenter(new THREE.Vector3());
@@ -626,13 +612,48 @@
                     model.scale.multiplyScalar(scale);
                     model.position.sub(center.multiplyScalar(scale));
                     
+                    const box2 = new THREE.Box3().setFromObject(femaleModel);
+                    const center2 = box2.getCenter(new THREE.Vector3());
+                    const size2 = box2.getSize(new THREE.Vector3());
+                    const maxDim2 = Math.max(size2.x, size2.y, size2.z);
+                    const scale2 = 1.5 / maxDim2;
+                    
+                    femaleModel.scale.multiplyScalar(scale2);
+                    femaleModel.position.sub(center2.multiplyScalar(scale2));
+                    
                     scene.add(model);
                     
-                    // Reload markers for new body
-                    injectionMarkers.forEach(marker => scene.remove(marker));
-                    injectionMarkers = [];
                     loadExistingMarkers();
+                    updateHistory();
+                } else {
+                    console.error('Model pack does not contain 2 models');
+                    container.innerHTML = '<div class="error"><h2>Model error</h2><p>The model pack should contain both male and female models.</p></div>';
                 }
+            }, undefined, (error) => {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="error"><h2>Cannot load 3D model</h2><p>Make sure male__female_base_mesh_pack.glb is in the same folder.</p></div>';
+            });
+            
+            window.switchGender = function() {
+                const selectedGender = document.getElementById('gender-select').value;
+                if (selectedGender === currentGender) return;
+                if (!maleModel || !femaleModel) return;
+                
+                currentGender = selectedGender;
+                
+                scene.remove(model);
+                
+                if (selectedGender === 'male') {
+                    model = maleModel;
+                } else {
+                    model = femaleModel;
+                }
+                
+                scene.add(model);
+                
+                injectionMarkers.forEach(marker => scene.remove(marker));
+                injectionMarkers = [];
+                loadExistingMarkers();
             };
             
             window.addEventListener('resize', () => {
