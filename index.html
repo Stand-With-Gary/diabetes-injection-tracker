@@ -356,6 +356,10 @@
     <div class="header">
         <h1>Diabetes Site Tracker</h1>
         <div class="header-controls">
+            <select id="gender-select" onchange="switchGender()" style="padding: 0.625rem 1.25rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; background: white; color: #475569; font-size: 0.875rem; font-weight: 600; cursor: pointer; margin-right: 0.75rem;">
+                <option value="male">Male body</option>
+                <option value="female">Female body</option>
+            </select>
             <button class="btn btn-secondary" onclick="clearAllMarkers()">Clear all</button>
             <button class="btn btn-secondary" onclick="exportData()">Export CSV</button>
         </div>
@@ -526,12 +530,20 @@
             controls.minDistance = 0.3;
             controls.maxDistance = 5;
             
+            let loadedModels = { male: null, female: null };
+            let currentGender = 'male';
+            
             const loader = new THREE.GLTFLoader();
-            loader.load('scene.glb', (gltf) => {
-                model = gltf.scene;
+            
+            // Load the pack file which contains both models
+            loader.load('male__female_base_mesh_pack.glb', (gltf) => {
+                console.log('Loaded model pack:', gltf);
                 
-                model.traverse((child) => {
+                // The pack contains both male and female as separate meshes
+                // We need to find and separate them
+                gltf.scene.traverse((child) => {
                     if (child.isMesh) {
+                        // Apply material to all meshes
                         child.material = new THREE.MeshStandardMaterial({
                             color: 0xd4a5a5,
                             roughness: 0.7,
@@ -539,8 +551,35 @@
                         });
                         child.castShadow = true;
                         child.receiveShadow = true;
+                        
+                        // Try to identify male vs female by name
+                        const name = child.name.toLowerCase();
+                        if (name.includes('female') || name.includes('woman')) {
+                            if (!loadedModels.female) loadedModels.female = [];
+                            loadedModels.female.push(child);
+                        } else {
+                            // Default to male if not explicitly female
+                            if (!loadedModels.male) loadedModels.male = [];
+                            loadedModels.male.push(child);
+                        }
                     }
                 });
+                
+                // If we couldn't separate them by name, split by index
+                // (usually the pack has them as separate objects)
+                if (!loadedModels.female && gltf.scene.children.length >= 2) {
+                    loadedModels.male = [gltf.scene.children[0]];
+                    loadedModels.female = [gltf.scene.children[1]];
+                }
+                
+                model = new THREE.Group();
+                
+                // Add only male meshes initially
+                if (loadedModels.male) {
+                    loadedModels.male.forEach(mesh => {
+                        model.add(mesh.clone());
+                    });
+                }
                 
                 const box = new THREE.Box3().setFromObject(model);
                 const center = box.getCenter(new THREE.Vector3());
@@ -557,8 +596,44 @@
                 updateHistory();
             }, undefined, (error) => {
                 console.error('Error:', error);
-                container.innerHTML = '<div class="error"><h2>Cannot load 3D model</h2><p>Make sure scene.gltf and scene.bin are in the same folder.</p></div>';
+                container.innerHTML = '<div class="error"><h2>Cannot load 3D model</h2><p>Make sure male__female_base_mesh_pack.glb is in the same folder.</p></div>';
             });
+            
+            window.switchGender = function() {
+                const selectedGender = document.getElementById('gender-select').value;
+                if (selectedGender === currentGender) return;
+                
+                currentGender = selectedGender;
+                
+                // Remove current model
+                scene.remove(model);
+                
+                // Create new model with selected gender
+                model = new THREE.Group();
+                const meshes = loadedModels[selectedGender];
+                
+                if (meshes) {
+                    meshes.forEach(mesh => {
+                        model.add(mesh.clone());
+                    });
+                    
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 1.5 / maxDim;
+                    
+                    model.scale.multiplyScalar(scale);
+                    model.position.sub(center.multiplyScalar(scale));
+                    
+                    scene.add(model);
+                    
+                    // Reload markers for new body
+                    injectionMarkers.forEach(marker => scene.remove(marker));
+                    injectionMarkers = [];
+                    loadExistingMarkers();
+                }
+            };
             
             window.addEventListener('resize', () => {
                 camera.aspect = container.clientWidth / container.clientHeight;
